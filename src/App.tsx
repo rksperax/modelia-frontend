@@ -1,42 +1,54 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { ToastContainer } from "react-toastify";
 import './App.css'
+import { ImageUpload } from './components/ImageUpload';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [image, setImage] = useState<string | null>(null)
 
   return (
-    <>
-      <div>
-        <h1 className="text-3xl font-bold underline">
-          Hello world!
-        </h1>
-        <a href="https://vite.dev" target="_blank" rel="noreferrer noopener">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer noopener">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen bg-gray-100 w-full p-4">
+      <header className="text-center mb-12">
+        <h1 className="text-4xl font-bold text-purple-600">AI Studio</h1>
+      </header>
+      <div className="flex flex-col items-center gap-6 lg:flex-row lg:justify-center lg:gap-4">
+        <div>
+          <ImageUpload
+            currentImage={image}
+            onImageSelect={(dataUrl) => {
+              setImage(dataUrl)
+            }}
+          />
+        </div>
+        <div>
+          <div className="p-6 bg-white rounded-lg shadow-lg w-80 h-80 flex items-center justify-center">
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Component 2
+            </h2>
+          </div>
+        </div>
+        <div>
+          <div className="p-6 bg-white rounded-lg shadow-lg w-80 h-80 flex items-center justify-center">
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Component 3
+            </h2>
+          </div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button
-          type="button"
-          onClick={() => {
-            setCount((count) => count + 1)
-          }}
-        >
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+    </div>
   )
 }
 

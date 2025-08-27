@@ -5,11 +5,21 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+
 body {
   margin: 0;
   display: flex;
-  place-items: center;
-  min-height: 100vh;
+}
+
+#root {
   max-width: 1440px;
+  margin: 0 auto;
+  text-align: center;
+  flex: 1;
+}
+
+@theme {
+  --font-body: Inter, sans-serif;
+
 }
 
