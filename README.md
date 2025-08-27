@@ -16,10 +16,14 @@ A modern React web application that simulates an AI-powered image generation stu
 - Automatic retry with exponential backoff (max 3 attempts)
 - Request abortion capability with loading states
 
-### 📚 Persistent History
+### Persistent History
 - Local storage of last 5 generations
 - Click any history item to restore settings
 - Clear all history functionality
+
+### Unit Test
+- Setup with vitest and React testing library
+- Wrote unit test for some components
 
 
 ## 🚀 Getting Started
