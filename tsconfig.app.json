@@ -21,7 +21,10 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Testing types for Vitest + React Testing Library */
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
   },
-  "include": ["src"]
+  "include": ["src", "**/*.test.ts", "**/*.test.tsx"]
 }
