@@ -1,39 +1,65 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { ToastContainer } from "react-toastify"
+import { ImageUpload } from './components/ImageUpload'
+import { PromptField } from './components/PromptField'
+import { StyleDropDown } from './components/StyleDropDown'
+import { Preview } from './components/Preview'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [image, setImage] = useState<string | null>(null)
+  const [prompt, setPrompt] = useState<string>('')
+  const [style, setStyle] = useState<string>('editorial')
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank" rel="noreferrer noopener">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer noopener">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="min-h-screen bg-gray-100 w-full p-4">
+      <header className="text-center mb-12">
+        <h1 className="text-4xl font-bold text-purple-600">AI Studio</h1>
+      </header>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:justify-center gap-4">
+        <div className="flex flex-col gap-3">
+          <ImageUpload
+            currentImage={image}
+            onImageSelect={(dataUrl) => {
+              setImage(dataUrl)
+            }}
+          />
+          <PromptField
+            value={prompt}
+            onChange={(value) => {
+              setPrompt(value)
+            }}
+          />
+          <StyleDropDown
+            value={style}
+            onChange={(value) => {
+              setStyle(value)
+            }}
+          />
+        </div>
+        <Preview image={image} prompt={prompt} style={style} />
+        <div>
+          <div className="p-6 bg-white rounded-lg shadow-lg w-80 h-80 flex items-center justify-center">
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Component 3
+            </h2>
+          </div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button
-          type="button"
-          onClick={() => {
-            setCount((count) => count + 1)
-          }}
-        >
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+    </div>
   )
 }
 
