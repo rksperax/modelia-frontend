@@ -1,2 +1,8 @@
 export const imageResizedMessage = 'Image resized'
 export const imageUploadErrorMessage = 'Failed to upload image'
+export const generationValidationFailedMessage = 'Please upload an image and enter a prompt'
+export const generationSuccessMessage = 'Your AI image has been generated successfully.'
+export const generationAbortMessage = 'The generation was aborted by user request.'
+export const generationErrorMessage = 'Please try again in a moment.'
+export const historyClearedMessage = 'History has been cleared.'
+export const historyClearErrorMessage = 'Failed to clear history.'

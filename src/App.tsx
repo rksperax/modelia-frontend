@@ -1,15 +1,122 @@
-import { useState } from 'react'
-import { ToastContainer } from "react-toastify"
+import { useCallback, useEffect, useState } from 'react'
+import { ToastContainer } from 'react-toastify'
 import { ImageUpload } from './components/ImageUpload'
 import { PromptField } from './components/PromptField'
 import { StyleDropDown } from './components/StyleDropDown'
 import { Preview } from './components/Preview'
+import { toast } from 'react-toastify'
+import { retryWithBackoff } from './utils/common'
+import { generate } from './services/mockApi'
+import { GenerateButton } from './components/GenerateButton'
+import { clearHistory, getHistory, saveToHistory } from './utils/storageUtils'
+import { History } from './components/History'
+import type { Generation } from './types'
+import {
+  generationAbortMessage,
+  generationErrorMessage,
+  generationSuccessMessage,
+  generationValidationFailedMessage,
+} from './constants/toastMessage'
+import {
+  generationAbortedByUser,
+  unknownError,
+} from './constants/validationError'
 import './App.css'
 
 function App() {
   const [image, setImage] = useState<string | null>(null)
   const [prompt, setPrompt] = useState<string>('')
   const [style, setStyle] = useState<string>('editorial')
+
+  const [history, setHistory] = useState<Generation[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [abortController, setAbortController] =
+    useState<AbortController | null>(null)
+
+  const handleGenerate = async () => {
+    if (!image || !prompt.trim()) {
+      toast.error(generationValidationFailedMessage)
+      return
+    }
+
+    const abortController = new AbortController()
+
+    setLoading(true)
+    setError(null)
+    setAbortController(abortController)
+
+    try {
+      const generation = await retryWithBackoff(
+        () =>
+          generate(
+            {
+              imageDataUrl: image,
+              prompt: prompt.trim(),
+              style: style,
+            },
+            abortController.signal
+          ),
+        3,
+        1000
+      )
+
+      // Save to history
+      saveToHistory(generation)
+      setHistory(getHistory())
+
+      // Update state
+      setLoading(false)
+      setAbortController(null)
+      setError(null)
+      // Update preview with generated result
+      setImage(generation.imageUrl)
+      setPrompt(generation.prompt)
+      setStyle(generation.style)
+
+      toast.success(generationSuccessMessage)
+    } catch (error) {
+      if (error instanceof Error && error.message === 'Request aborted') {
+        toast.error(generationAbortMessage)
+      } else {
+        const errorMessage =
+          error instanceof Error ? error.message : unknownError
+        setError(`Generation failed: ${errorMessage}`)
+
+        toast.error(generationErrorMessage)
+      }
+    } finally {
+      setLoading(false)
+      setAbortController(null)
+    }
+  }
+
+  const handleAbort = useCallback(() => {
+    if (abortController) {
+      abortController.abort()
+      setLoading(false)
+      setAbortController(null)
+      setError(generationAbortedByUser)
+    }
+  }, [abortController])
+
+  const handleSelectHistoryItem = (item: Generation) => {
+    setImage(item.imageUrl)
+    setPrompt(item.prompt)
+    setStyle(item.style)
+    setError(null)
+  }
+
+  const handleClearHistory = () => {
+    clearHistory()
+    setHistory([])
+  }
+
+  useEffect(() => {
+    setHistory(getHistory())
+  }, [])
+
+  const canGenerate = Boolean(image && prompt.trim() && !loading)
 
   return (
     <div className="min-h-screen bg-gray-100 w-full p-4">
@@ -36,15 +143,20 @@ function App() {
               setStyle(value)
             }}
           />
+          <GenerateButton
+            canGenerate={canGenerate}
+            isLoading={loading}
+            onGenerate={() => void handleGenerate()}
+            onAbort={handleAbort}
+            error={error}
+          />
         </div>
         <Preview image={image} prompt={prompt} style={style} />
-        <div>
-          <div className="p-6 bg-white rounded-lg shadow-lg w-80 h-80 flex items-center justify-center">
-            <h2 className="text-2xl font-semibold text-gray-800">
-              Component 3
-            </h2>
-          </div>
-        </div>
+        <History
+          history={history}
+          onSelectItem={handleSelectHistoryItem}
+          onClearHistory={handleClearHistory}
+        />
       </div>
 
       <ToastContainer
