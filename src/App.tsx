@@ -121,7 +121,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100 w-full p-4">
       <header className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-purple-600">AI Studio</h1>
+        <h1 className="text-4xl font-bold text-blue-600">AI Image Studio</h1>
       </header>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:justify-center gap-4">
         <div className="flex flex-col gap-3">
