@@ -109,7 +109,7 @@ export function ImageUpload({
         }
       `}
         >
-          <input {...getInputProps()} />
+          <input type="file" {...getInputProps()} data-testid="file-input" />
 
           <div className="flex flex-col items-center gap-4">
             {isProcessing ? (
